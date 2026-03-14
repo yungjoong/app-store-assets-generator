@@ -23,6 +23,8 @@
       "name": "한국어",
       "title": "복리계산기",
       "featureSubtitle": "투자의 마법을 가장 직관적으로 설계하세요",
+      "shortDescription": "가장 직관적인 복리 계산기. 자산 성장을 한눈에 확인하세요.",
+      "fullDescription": "복리 계산기 전문가용 버전입니다. 다양한 시나리오와 트레이딩 모드를 지원합니다.",
       "screens": [
         "가장 직관적인 복리 계산기",
         "한눈에 들어오는 자산 성장 차트",
@@ -36,64 +38,14 @@
       "name": "영어",
       "title": "Compound Interest Calculator",
       "featureSubtitle": "Visualize the Magic of Compounding",
+      "shortDescription": "Intuitive compound interest calculator. Visualize your wealth growth.",
+      "fullDescription": "Professional compound interest calculator supporting various scenarios and trading modes.",
       "screens": [
         "Intuitive Compound Calculator",
         "Visualize Your Wealth Growth",
         "Advanced Day Trading Mode",
         "Custom Contributions & Withdrawals",
         "Dark & Light Themes"
-      ]
-    },
-    {
-      "code": "ja",
-      "name": "일본어",
-      "title": "複利計算シミュレーター",
-      "featureSubtitle": "投資の魔法を視覚化します",
-      "screens": [
-        "直感的な複利計算",
-        "資産の成長をチャートで確認",
-        "デイトレーダーのための完全サポート",
-        "追加積立と引き出しの設定",
-        "ダーク／ライトテーマの切り替え"
-      ]
-    },
-    {
-      "code": "es",
-      "name": "스페인어",
-      "title": "Simulador Interés",
-      "featureSubtitle": "Visualiza la Magia del Interés Compuesto",
-      "screens": [
-        "Calculadora Intuitiva",
-        "Crecimiento de tu Riqueza",
-        "Modo Avanzado de Trading",
-        "Aportaciones y Retiros Personalizados",
-        "Temas Oscuro y Claro"
-      ]
-    },
-    {
-      "code": "zh",
-      "name": "중국어",
-      "title": "複利計算機",
-      "featureSubtitle": "將投資的魔力視覺化",
-      "screens": [
-        "直觀的複利計算",
-        "一目了然的資產圖表",
-        "當沖客專屬功能",
-        "自訂存款及提款設定",
-        "深色及淺色主題"
-      ]
-    },
-    {
-      "code": "pt",
-      "name": "포르투갈어",
-      "title": "Cálculo de Juros",
-      "featureSubtitle": "Visualize a Mágica dos Juros Compostos",
-      "screens": [
-        "Calculadora Intuitiva",
-        "Crecimiento do Patrimônio",
-        "Modo Avanzado de Trading",
-        "Aportes e Retiradas Personalizados",
-        "Temas Escuro e Claro"
       ]
     }
   ]

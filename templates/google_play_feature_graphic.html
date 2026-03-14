@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -143,7 +143,7 @@
 
         <div class="content-left">
             <!-- Use the high-res icon -->
-            <img class="app-icon" src="web/icons/Icon-512.png" alt="App Icon">
+            <img class="app-icon" src="" alt="App Icon">
             <h1 class="title">Compound Interest Calculator</h1>
             <p class="subtitle">Visualize the Magic of Compounding</p>
         </div>
@@ -151,7 +151,7 @@
         <div class="device-container">
             <div class="device-frame">
                 <!-- Using one of your best screenshots -->
-                <img class="screenshot" src="store-assets/screenshots/phone/phone_en_01_main.png" alt="Screenshot">
+                <img class="screenshot" src="" alt="Screenshot">
             </div>
         </div>
 
@@ -166,13 +166,15 @@
     <script>
         async function updateLayout() {
             const params = new URLSearchParams(window.location.search);
-            const titleText = params.get('title') || 'Compound Interest Calculator';
-            const subtitleText = params.get('subtitle') || 'Visualize the Magic of Compounding';
-            const imgSrc = params.get('img') || 'store-assets/screenshots/phone/phone_en_01_main.png';
-            const langCode = params.get('lang') || 'en';
+            const titleText = params.get('title') || 'App Title';
+            const subtitleText = params.get('subtitle') || 'App Subtitle';
+            const imgSrc = params.get('img') || '';
+            const iconSrc = params.get('icon') || '';
+            const langCode = params.get('lang') || 'ko';
 
             document.documentElement.lang = langCode;
-                        // Shrink to fit logic for title and subtitle
+            
+            // Shrink to fit logic for title and subtitle
             function shrinkToFit(element, maxWidth, minSize) {
                 let fontSize = parseInt(window.getComputedStyle(element).fontSize);
                 while (element.scrollWidth > maxWidth && fontSize > minSize) {
@@ -183,9 +185,12 @@
 
             const titleEl = document.querySelector('.title');
             const subtitleEl = document.querySelector('.subtitle');
+            
             titleEl.innerText = titleText;
             subtitleEl.innerText = subtitleText;
-            document.querySelector('.screenshot').src = imgSrc;
+            
+            if (imgSrc) document.querySelector('.screenshot').src = imgSrc;
+            if (iconSrc) document.querySelector('.app-icon').src = iconSrc;
 
             // Wait for rendering and then adjust
             setTimeout(() => {

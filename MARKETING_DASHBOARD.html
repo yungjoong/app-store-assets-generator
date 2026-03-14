@@ -56,15 +56,30 @@
 
         async function loadConfig() {
             const params = new URLSearchParams(window.location.search);
+            // Default to ../assets-config.json relative to this file
             const configPath = params.get('config') || '../assets-config.json';
+            
             try {
+                console.log(`Attempting to load config from: ${configPath}`);
                 const response = await fetch(configPath);
-                if (!response.ok) throw new Error("Config not found");
+                if (!response.ok) throw new Error(`Config not found at ${configPath} (Status: ${response.status})`);
                 config = await response.json();
                 initializeApp();
             } catch (err) {
-                console.warn("Config loading failed, trying sample...");
+                console.warn("Config loading failed:", err.message);
+                // Fallback attempt: root level fetch if served via npx serve .
                 try {
+                    console.log("Attempting fallback load from /tools/assets-config.json");
+                    const response = await fetch('/tools/assets-config.json');
+                    if (response.ok) {
+                        config = await response.json();
+                        initializeApp();
+                        return;
+                    }
+                } catch (e) {}
+
+                try {
+                    console.log("Trying sample config...");
                     const response = await fetch('assets-config.sample.json');
                     config = await response.json();
                     initializeApp();
@@ -72,12 +87,25 @@
                     document.body.innerHTML = `
                         <div style="padding: 50px; text-align: center; font-family: sans-serif;">
                             <h2 style="color: #d32f2f;">⚠️ 설정 파일을 찾을 수 없습니다</h2>
+                            <p>설정 파일 위치: <code>${configPath}</code></p>
                             <p>프로젝트 루트에 <code>assets-config.json</code> 파일을 생성하거나, <br>URL 파라미터로 경로를 지정해주세요. (예: <code>?config=path/to/config.json</code>)</p>
                             <p style="font-size: 0.9em; color: #666;">기본 샘플을 보려면 <a href="?config=assets-config.sample.json">여기</a>를 클릭하세요.</p>
                         </div>
                     `;
                 }
             }
+        }
+
+
+
+        function resolveScreenshotPath(pattern, device, langCode, num) {
+            const suffix = (config.assets.suffixes && config.assets.suffixes[num]) || '';
+            return pattern
+                .replace('{device}', device)
+                .replace('{lang}', langCode)
+                .replace('{num}', num)
+                .replace('{suffix}', suffix)
+                .replace(/_+\.png$/, '.png');
         }
 
         function initializeApp() {
@@ -89,14 +117,19 @@
             }
 
             const listContainer = document.getElementById('lang-list');
+            const currentConfigParam = new URLSearchParams(window.location.search).get('config') || '../assets-config.json';
+            
             config.languages.forEach(lang => {
+                const iconUrl = "../../" + config.assets.iconPath;
+                const screenshotUrl = "../../" + resolveScreenshotPath(config.assets.screenshotPathPattern, 'phone', lang.code, '01');
+                
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.innerHTML = `
                     <h2>${lang.name} <span class="lang-code">${lang.code.toUpperCase()}</span></h2>
                     <div class="action-bar">
                         <button class="btn btn-primary" onclick="generatePack('${lang.code}')">📦 전체 자산 ZIP 다운로드</button>
-                        <a href="templates/google_play_feature_graphic.html?title=${encodeURIComponent(lang.title)}&subtitle=${encodeURIComponent(lang.featureSubtitle)}&lang=${lang.code}&config=${encodeURIComponent(new URLSearchParams(window.location.search).get('config') || '../assets-config.json')}" target="_blank" class="btn btn-outline">✨ 피처 그래픽 보기</a>
+                        <a href="templates/google_play_feature_graphic.html?title=${encodeURIComponent(lang.title)}&subtitle=${encodeURIComponent(lang.featureSubtitle)}&lang=${lang.code}&icon=${encodeURIComponent(iconUrl)}&img=${encodeURIComponent(screenshotUrl)}&config=${encodeURIComponent(currentConfigParam)}" target="_blank" class="btn btn-outline">✨ 피처 그래픽 보기</a>
                     </div>
                 `;
                 listContainer.appendChild(card);
@@ -226,9 +259,13 @@
                             doc.documentElement.style.setProperty('--bg-gradient', config.theme.screenshotGradient);
                         }
 
-                        const fontSizeBase = isLandscape ? h : (h > w ? h : w);
-                        titleEl.style.fontSize = (fontSizeBase * (isLandscape ? 0.06 : 0.04)) + 'px';
-                        frameEl.style.width = (device.mode === 'phone' ? '75%' : '85%');
+                        if (titleEl) {
+                            const fontSizeBase = isLandscape ? h : (h > w ? h : w);
+                            titleEl.style.fontSize = (fontSizeBase * (isLandscape ? 0.06 : 0.04)) + 'px';
+                        }
+                        if (frameEl) {
+                            frameEl.style.width = (device.mode === 'phone' ? '75%' : '85%');
+                        }
                     });
                     folder.file(`${device.id}_${lang.code}_${imgNum}.png`, blob);
                 }
