@@ -20,7 +20,10 @@ git submodule add https://github.com/yungjoong/app-store-assets-generator.git to
 ```
 
 ### 2. 설정 파일 생성
-프로젝트 루트 폴더에 `assets-config.json` 파일을 생성합니다. `assets-config.sample.json`의 내용을 복사하여 수정하세요.
+도구의 한 단계 상위 폴더(예: `tools/assets-config.json`)에 `assets-config.json` 파일을 생성합니다. 
+(서브모듈로 사용 시 프로젝트 루트가 아닌 `tools/` 폴더에 두는 것이 관리상 깔끔하며, 도구가 기본적으로 `../assets-config.json` 경로를 탐색합니다.)
+
+`assets-config.sample.json`의 내용을 복사하여 수정하세요.
 
 **주요 설정 항목:**
 - `appName`: 앱 이름
