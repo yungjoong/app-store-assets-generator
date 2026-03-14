@@ -151,19 +151,18 @@
 
             const imgEl = document.getElementById('screenshot');
             
-            // If the requested image fails to load, fallback to English version
+            // Set up fallback handler immediately
             imgEl.onerror = function() {
-                // Determine the correct English fallback path by replacing the language code in the current path
-                // Standard pattern: device_lang_num_suffix.png (e.g., phone_ja_01_main.png)
                 const currentSrc = this.src;
-                if (currentSrc.includes('_en_')) return; // Already English or fallback failed
-                
+                if (!currentSrc || currentSrc.includes('_en_')) return;
                 const fallbackSrc = currentSrc.replace(/_([a-z]{2})_(\d{2})_/, '_en_$2_');
-                console.log(`Image not found: ${currentSrc}. Falling back to: ${fallbackSrc}`);
-                this.src = fallbackSrc;
+                if (fallbackSrc !== currentSrc) {
+                    console.log(`Image not found: ${currentSrc}. Falling back to: ${fallbackSrc}`);
+                    this.src = fallbackSrc;
+                }
             };
 
-            imgEl.src = imgSrc;
+            if (imgSrc) imgEl.src = imgSrc;
 
             // Wait for image to load to get its aspect ratio for a perfect fit
             imgEl.onload = () => {

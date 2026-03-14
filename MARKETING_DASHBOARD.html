@@ -290,24 +290,33 @@
                     modifyFn(doc);
                     const img = doc.getElementById('screenshot') || doc.querySelector('.screenshot');
                     const checkReady = async () => {
-                        await new Promise(r => setTimeout(r, 500));
+                        // Small initial delay to allow src changes and fallback logic to trigger
+                        await new Promise(r => setTimeout(r, 600)); 
+                        
                         if (img && img.src && !img.complete) {
-                            return new Promise(resolve => {
+                            console.log(`Waiting for image load: ${img.src}`);
+                            await new Promise(resolve => {
                                 img.onload = resolve;
-                                img.onerror = resolve;
-                            }).then(() => checkReady());
+                                img.onerror = resolve; // Continue even on error to avoid hanging
+                            });
+                            // Recursive check to handle if onerror triggered a fallback load
+                            return checkReady(); 
                         }
+                        
+                        // Final safety delay for fonts and layout settling
                         setTimeout(async () => {
                             try {
                                 const canvas = await html2canvas(doc.body, {
                                     width: width, height: height, scale: 1, useCORS: true, logging: false, letterRendering: 1
                                 });
                                 canvas.toBlob(blob => {
-                                    document.getElementById('render-target').removeChild(iframe);
+                                    if (document.getElementById('render-target').contains(iframe)) {
+                                        document.getElementById('render-target').removeChild(iframe);
+                                    }
                                     resolve(blob);
                                 }, 'image/png');
                             } catch (e) { reject(e); }
-                        }, 1000);
+                        }, 800);
                     };
                     checkReady();
                 };

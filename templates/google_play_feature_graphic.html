@@ -190,16 +190,19 @@
             subtitleEl.innerText = subtitleText;
             
             const ssEl = document.querySelector('.screenshot');
-            if (imgSrc) {
-                ssEl.onerror = function() {
-                    const currentSrc = this.src;
-                    if (currentSrc.includes('_en_')) return;
-                    const fallbackSrc = currentSrc.replace(/_([a-z]{2})_(\d{2})_/, '_en_$2_');
+            
+            // Set up fallback handler immediately so it works even for DOM-injected sources
+            ssEl.onerror = function() {
+                const currentSrc = this.src;
+                if (!currentSrc || currentSrc.includes('_en_')) return;
+                const fallbackSrc = currentSrc.replace(/_([a-z]{2})_(\d{2})_/, '_en_$2_');
+                if (fallbackSrc !== currentSrc) {
                     console.log(`Image not found: ${currentSrc}. Falling back to: ${fallbackSrc}`);
                     this.src = fallbackSrc;
-                };
-                ssEl.src = imgSrc;
-            }
+                }
+            };
+
+            if (imgSrc) ssEl.src = imgSrc;
             if (iconSrc) document.querySelector('.app-icon').src = iconSrc;
 
             // Wait for rendering and then adjust
