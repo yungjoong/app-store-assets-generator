@@ -1,0 +1,100 @@
+{
+  "appName": "Compound Calc",
+  "theme": {
+    "primaryColor": "#1870C8",
+    "backgroundColor": "#f0f4f8",
+    "featureGraphicGradient": "linear-gradient(135deg, #1e88e5 0%, #1565c0 100%)",
+    "screenshotGradient": "linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%)"
+  },
+  "assets": {
+    "iconPath": "web/icons/Icon-512.png",
+    "screenshotPathPattern": "store-assets/screenshots/{device}/{device}_{lang}_{num}_{suffix}.png",
+    "suffixes": {
+      "01": "main",
+      "02": "scenarios",
+      "03": "trading",
+      "04": "advanced",
+      "05": "light"
+    }
+  },
+  "languages": [
+    {
+      "code": "ko",
+      "name": "한국어",
+      "title": "복리계산기",
+      "featureSubtitle": "투자의 마법을 가장 직관적으로 설계하세요",
+      "screens": [
+        "가장 직관적인 복리 계산기",
+        "한눈에 들어오는 자산 성장 차트",
+        "데이 트레이더를 위한 완벽 지원",
+        "고급 단위 적립 및 인출 시뮬레이션",
+        "다크 및 라이트 테마 지원"
+      ]
+    },
+    {
+      "code": "en",
+      "name": "영어",
+      "title": "Compound Interest Calculator",
+      "featureSubtitle": "Visualize the Magic of Compounding",
+      "screens": [
+        "Intuitive Compound Calculator",
+        "Visualize Your Wealth Growth",
+        "Advanced Day Trading Mode",
+        "Custom Contributions & Withdrawals",
+        "Dark & Light Themes"
+      ]
+    },
+    {
+      "code": "ja",
+      "name": "일본어",
+      "title": "複利計算シミュレーター",
+      "featureSubtitle": "投資の魔法を視覚化します",
+      "screens": [
+        "直感的な複利計算",
+        "資産の成長をチャートで確認",
+        "デイトレーダーのための完全サポート",
+        "追加積立と引き出しの設定",
+        "ダーク／ライトテーマの切り替え"
+      ]
+    },
+    {
+      "code": "es",
+      "name": "스페인어",
+      "title": "Simulador Interés",
+      "featureSubtitle": "Visualiza la Magia del Interés Compuesto",
+      "screens": [
+        "Calculadora Intuitiva",
+        "Crecimiento de tu Riqueza",
+        "Modo Avanzado de Trading",
+        "Aportaciones y Retiros Personalizados",
+        "Temas Oscuro y Claro"
+      ]
+    },
+    {
+      "code": "zh",
+      "name": "중국어",
+      "title": "複利計算機",
+      "featureSubtitle": "將投資的魔力視覺化",
+      "screens": [
+        "直觀的複利計算",
+        "一目了然的資產圖表",
+        "當沖客專屬功能",
+        "自訂存款及提款設定",
+        "深色及淺色主題"
+      ]
+    },
+    {
+      "code": "pt",
+      "name": "포르투갈어",
+      "title": "Cálculo de Juros",
+      "featureSubtitle": "Visualize a Mágica dos Juros Compostos",
+      "screens": [
+        "Calculadora Intuitiva",
+        "Crecimiento do Patrimônio",
+        "Modo Avanzado de Trading",
+        "Aportes e Retiradas Personalizados",
+        "Temas Escuro e Claro"
+      ]
+    }
+  ]
+}
