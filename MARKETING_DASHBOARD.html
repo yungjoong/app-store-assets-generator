@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Compound Calc Marketing Dashboard (v3.0)</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <style>
+        :root { --brand-blue: #1870C8; }
+        body { font-family: 'Segoe UI', sans-serif; padding: 40px; background: #f0f4f8; color: #333; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .card { background: white; padding: 25px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); margin-bottom: 24px; border: 1px solid #e1e8ed; }
+        h1 { color: var(--brand-blue); text-align: center; margin-bottom: 40px; }
+        h2 { margin: 0 0 15px 0; display: flex; align-items: center; gap: 10px; }
+        .lang-code { font-size: 0.7em; background: #e3f2fd; color: #1976d2; padding: 4px 10px; border-radius: 20px; }
+        .action-bar { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+        .btn { padding: 10px 18px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; font-size: 14px; transition: 0.2s; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-primary { background: var(--brand-blue); color: white; }
+        .btn-outline { background: white; color: var(--brand-blue); border: 2px solid var(--brand-blue); }
+        #status-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); color: white; display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 10000; }
+        .loader { border: 5px solid #f3f3f3; border-top: 5px solid var(--brand-blue); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 20px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .alert { background: #fff3e0; padding: 15px; border-radius: 8px; border: 1px solid #ffe0b2; font-size: 14px; color: #e65100; margin-bottom: 25px; text-align: center; }
+    </style>
+</head>
+<body>
+    <div id="status-overlay">
+        <div class="loader"></div>
+        <div id="status-text">ì¤€ë¹?ì¤?..</div>
+        <div id="status-subtext" style="font-size: 12px; margin-top: 10px; color: #aaa;">DOM ì§ì ‘ ì£¼ì… ë°©ì‹?¼ë¡œ ?ì„± ì¤?..</div>
+    </div>
+
+    <div class="container">
+        <h1>?? ë³µë¦¬ê³„ì‚°ê¸?ë§ˆì????€?œë³´??(v3.0)</h1>
+
+        <div class="alert">
+            ? ï¸ <b>?„ìˆ˜:</b> ?°ë??ì—??<b><code>npx serve .</code></b> ?¤í–‰ ??<b><code>http://localhost:3000/MARKETING_DASHBOARD.html</code></b>ë¡??‘ì†?˜ì„¸??
+        </div>
+
+        <div id="lang-list"></div>
+
+        <div class="card" style="text-align: center; margin-top: 40px; border: 2px dashed var(--brand-blue); background: #f8f9fa;">
+            <h2 style="justify-content: center;">?Œ ëª¨ë“  ?¸ì–´ ?µí•© ?¨í‚¤ì§€</h2>
+            <p style="margin-bottom: 20px;">ëª¨ë“  ì§€???¸ì–´???ì‚°???˜ë‚˜??ZIP ?Œì¼ë¡??ì„±?©ë‹ˆ?? (?œê°„???¤ì†Œ ?Œìš”?????ˆìŠµ?ˆë‹¤)</p>
+            <button class="btn btn-primary" onclick="generateAllPacks()" style="padding: 15px 30px; font-size: 1.1em;">
+                ?? ëª¨ë“  ?¸ì–´ ?ì‚° ?µí•© ?¤ìš´ë¡œë“œ (.ZIP)
+            </button>
+        </div>
+    </div>
+
+    <div id="render-target" style="position: absolute; left: -9999px; top: 0;"></div>
+
+    <script>
+        const languages = [
+            { code: 'ko', name: '?œêµ­??, title: 'ë³µë¦¬ê³„ì‚°ê¸?, featureSubtitle: '?¬ì??ë§ˆë²•??ê°€??ì§ê??ìœ¼ë¡??¤ê³„?˜ì„¸??, screens: ['ê°€??ì§ê??ì¸ ë³µë¦¬ ê³„ì‚°ê¸?, '?œëˆˆ???¤ì–´?¤ëŠ” ?ì‚° ?±ì¥ ì°¨íŠ¸', '?°ì´ ?¸ë ˆ?´ë”ë¥??„í•œ ?„ë²½ ì§€??, 'ê³ ê¸‰ ?¨ìœ„ ?©ì… ë°??¸ì¶œ ?œë??ˆì´??, '?¤í¬ ë°??¼ì´???Œë§ˆ ì§€??] },
+            { code: 'en', name: '?ì–´', title: 'Compound Interest Calculator', featureSubtitle: 'Visualize the Magic of Compounding', screens: ['Intuitive Compound Calculator', 'Visualize Your Wealth Growth', 'Advanced Day Trading Mode', 'Custom Contributions & Withdrawals', 'Dark & Light Themes'] },
+            { code: 'ja', name: '?¼ë³¸??, title: 'è¤‡åˆ©è¨ˆç®—?·ãƒŸ?¥ãƒ¬?¼ã‚¿??, featureSubtitle: '?•è³‡??­”æ³•ë? è¦–è¦º?–í•©?œë‹¤', screens: ['?´æ„Ÿ?„ãªè¤‡åˆ©è¨ˆç®—', 'è³‡ç”£??ˆ?·ã‚’?ãƒ£?¼ãƒˆ?§ç¢ºèª?, '?‡ì´?¸ë ˆ?´ë”??Ÿ?ã®å®Œå…¨?µãƒ?¼ãƒˆ', 'è¿½åŠ ??‹ ?ºã¨å¼•ã?ºã—è¨?®š', '?€?¼ã‚¯ï¼ãƒ©?¤ãƒˆ?†ãƒ¼?å?å¿?] },
+            { code: 'es', name: '?¤í˜?¸ì–´', title: 'Simulador InterÃ©s', featureSubtitle: 'Visualiza la Magia del InterÃ©s Compuesto', screens: ['Calculadora Intuitiva', 'Crecimiento de tu Riqueza', 'Modo Avanzado de Trading', 'Aportaciones y Retiros Personalizados', 'Temas Oscuro y Claro'] },
+            { code: 'zh', name: 'ì¤‘êµ­??, title: 'è¤‡åˆ©è¨ˆç®—æ©?, featureSubtitle: 'å°‡æŠ•è³‡ì˜ é­”åŠ› è¦–è¦º??, screens: ['?´è??„è¤‡?©è¨ˆç®?, 'ä¸€??º†?¶ì˜ è³‡ç”¢ ?–è¡¨', '?¶æ²–å®?å°ˆå±¬ ?Ÿèƒ½', '?ªè¨‚ å­˜æ¬¾ê³??æ¬¾ è¨?®š', 'æ·±è‰² ë°?æ·ºè‰² ä¸»é¡Œ'] },
+            { code: 'pt', name: '?¬ë¥´?¬ê°ˆ??, title: 'CÃ¡lculo de Juros', featureSubtitle: 'Visualize a MÃ¡gica dos Juros Compostos', screens: ['Calculadora Intuitiva', 'Crescimento do PatrimÃ´nio', 'Modo Avanzado de Trading', 'Aportes e Retiradas Personalizados', 'Temas Escuro e Claro'] }
+        ];
+
+        const listContainer = document.getElementById('lang-list');
+        languages.forEach(lang => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <h2>${lang.name} <span class="lang-code">${lang.code.toUpperCase()}</span></h2>
+                <div class="action-bar">
+                    <button class="btn btn-primary" onclick="generatePack('${lang.code}')">?“¦ ?„ì²´ ?ì‚° ZIP ?¤ìš´ë¡œë“œ</button>
+                    <a href="google_play_feature_graphic.html?title=${encodeURIComponent(lang.title)}&subtitle=${encodeURIComponent(lang.featureSubtitle)}&img=${encodeURIComponent(`store-assets/screenshots/phone/phone_${lang.code}_01_main.png`)}&lang=${lang.code}" target="_blank" class="btn btn-outline">???¼ì²˜ ê·¸ë˜??ë³´ê¸°</a>
+                </div>
+            `;
+            listContainer.appendChild(card);
+        });
+
+        async function generatePack(langCode) {
+            const lang = languages.find(l => l.code === langCode);
+            const overlay = document.getElementById('status-overlay');
+            const statusText = document.getElementById('status-text');
+            overlay.style.display = 'flex';
+
+            const zip = new JSZip();
+            try {
+                await buildLangAssets(lang, zip, statusText);
+                statusText.innerText = "?Œì¼ ?•ì¶• ì¤?..";
+                const content = await zip.generateAsync({type: "blob"});
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(content);
+                link.download = `assets_${langCode}.zip`;
+                link.click();
+            } catch (err) {
+                console.error(err);
+                alert("?¤ë¥˜ ë°œìƒ: " + err.message);
+            } finally {
+                overlay.style.display = 'none';
+            }
+        }
+
+        async function generateAllPacks() {
+            const overlay = document.getElementById('status-overlay');
+            const statusText = document.getElementById('status-text');
+            overlay.style.display = 'flex';
+
+            const masterZip = new JSZip();
+            try {
+                for (const lang of languages) {
+                    const langFolder = masterZip.folder(lang.code);
+                    await buildLangAssets(lang, langFolder, statusText);
+                }
+                statusText.innerText = "ìµœì¢… ?µí•© ZIP ?•ì¶• ì¤?..";
+                const content = await masterZip.generateAsync({type: "blob"});
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(content);
+                link.download = `all_marketing_assets.zip`;
+                link.click();
+            } catch (err) {
+                console.error(err);
+                alert("?¤ë¥˜ ë°œìƒ: " + err.message);
+            } finally {
+                overlay.style.display = 'none';
+            }
+        }
+
+        async function buildLangAssets(lang, zipContainer, statusText) {
+            const devices = [
+                { id: 'phone', name: '?´ë???, w: 1242, h: 2208, mode: 'phone' },
+                { id: 'tablet7', name: '7?¸ì¹˜ ?œë¸”ë¦?, w: 1200, h: 1920, mode: 'tablet' },
+                { id: 'tablet10', name: '10?¸ì¹˜ ?œë¸”ë¦?, w: 2048, h: 2732, mode: 'tablet' }
+            ];
+
+            const fixTextLayout = (text) => {
+                if (!text) return "";
+                return text.split(' ').map(word =>
+                    `<span style="white-space: nowrap;">${word.split('').join('&ZeroWidthSpace;')}</span>`
+                ).join(' ');
+            };
+
+            // 1. ?¼ì²˜ ê·¸ë˜??
+            statusText.innerText = `${lang.name}: ?¼ì²˜ ê·¸ë˜???ì„± ì¤?..`;
+            const featureBlob = await captureDirect('templates/google_play_feature_graphic.html', 1024, 500, (doc) => {
+                doc.querySelector('.title').innerHTML = fixTextLayout(lang.title);
+                doc.querySelector('.subtitle').innerHTML = fixTextLayout(lang.featureSubtitle);
+            });
+            zipContainer.file(`feature_graphic_${lang.code}.png`, featureBlob);
+
+            // 2. ?¤í¬ë¦°ìƒ·??
+            for (const device of devices) {
+                const folder = zipContainer.folder(device.id);
+                for (let i = 1; i <= 5; i++) {
+                    statusText.innerText = `${lang.name}: ${device.name} (${i}/5) ?ì„± ì¤?..`;
+                    const imgNum = i.toString().padStart(2, '0');
+                    const suffix = { '01':'main', '02':'scenarios', '03':'trading', '04':'advanced', '05':'light' }[imgNum];
+                    const imgPath = `store-assets/screenshots/${device.id}/${device.id}_${lang.code}_${imgNum}_${suffix}.png`;
+
+                    const isLandscape = await checkOrientation(imgPath);
+                    let w = device.w;
+                    let h = device.h;
+                    if (isLandscape) { w = device.h; h = device.w; }
+
+                    const blob = await captureDirect('templates/marketing_template.html', w, h, (doc) => {
+                        const titleEl = doc.getElementById('title');
+                        const imgEl = doc.getElementById('screenshot');
+                        const appEl = doc.getElementById('app');
+                        const frameEl = doc.getElementById('frame');
+
+                        if (titleEl) titleEl.innerHTML = fixTextLayout(lang.screens[i-1]);
+                        if (imgEl) imgEl.src = imgPath;
+                        if (device.mode === 'tablet') appEl.classList.add('tablet-mode');
+                        if (isLandscape) appEl.classList.add('landscape-mode');
+                        if (i === 5) appEl.classList.add('dark-theme-mode');
+
+                        const fontSizeBase = isLandscape ? h : (h > w ? h : w);
+                        titleEl.style.fontSize = (fontSizeBase * (isLandscape ? 0.06 : 0.04)) + 'px';
+                        frameEl.style.width = (device.mode === 'phone' ? '75%' : '85%');
+                    });
+                    folder.file(`${device.id}_${lang.code}_${imgNum}.png`, blob);
+                }
+            }
+        }
+
+        async function checkOrientation(src) {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = () => resolve(img.width > img.height);
+                img.onerror = () => {
+                    if (src.includes('_en_')) { resolve(false); return; }
+                    const enSrc = src.replace(/_([a-z]{2})_(\d{2})_/, '_en_$2_');
+                    checkOrientation(enSrc).then(resolve);
+                };
+                img.src = src;
+            });
+        }
+
+        async function captureDirect(baseUrl, width, height, modifyFn) {
+            return new Promise((resolve, reject) => {
+                const iframe = document.createElement('iframe');
+                iframe.style.width = width + 'px';
+                iframe.style.height = height + 'px';
+                iframe.style.border = 'none';
+                iframe.src = baseUrl;
+                document.getElementById('render-target').appendChild(iframe);
+
+                iframe.onload = () => {
+                    const doc = iframe.contentWindow.document;
+                    modifyFn(doc);
+                    const img = doc.getElementById('screenshot') || doc.querySelector('.screenshot');
+                    const checkReady = async () => {
+                        await new Promise(r => setTimeout(r, 500));
+                        if (img && img.src && !img.complete) {
+                            return new Promise(resolve => {
+                                img.onload = resolve;
+                                img.onerror = resolve;
+                            }).then(() => checkReady());
+                        }
+                        setTimeout(async () => {
+                            try {
+                                const canvas = await html2canvas(doc.body, {
+                                    width: width, height: height, scale: 1, useCORS: true, logging: false, letterRendering: 1
+                                });
+                                canvas.toBlob(blob => {
+                                    document.getElementById('render-target').removeChild(iframe);
+                                    resolve(blob);
+                                }, 'image/png');
+                            } catch (e) { reject(e); }
+                        }, 1000);
+                    };
+                    checkReady();
+                };
+            });
+        }
+    </script>
+</body>
+</html>

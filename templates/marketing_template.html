@@ -1,0 +1,216 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketing Screenshot Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            --text-color: #ffffff;
+            --frame-color: #ffffff;
+            --font-family: 'Outfit', sans-serif;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: var(--font-family);
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+            background: var(--bg-gradient);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        .title-wrapper {
+            position: relative;
+            z-index: 10;
+            margin-top: 50px;
+            margin-bottom: 30px;
+            flex-shrink: 0;
+            text-align: center;
+        }
+
+        .title {
+            color: var(--text-color);
+            font-size: 5rem;
+            font-weight: 700;
+            text-align: center;
+            max-width: 90%;
+            margin: 0 auto;
+            line-height: 1.2;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            white-space: pre-wrap;
+            letter-spacing: normal;
+        }
+
+        .device-wrapper {
+            width: 100%;
+            flex-grow: 1; /* Takes up all remaining height */
+            display: flex;
+            justify-content: center;
+            align-items: flex-end; /* Rests at the bottom of the view */
+            overflow: hidden; /* Fallback */
+            padding-bottom: 0;
+        }
+
+        .device-frame {
+            background: transparent; /* Remove white bezel */
+            border-radius: 32px 32px 0 0; /* Top rounded corners for portrait */
+            padding: 0; /* Remove padding */
+            box-shadow: 0 -10px 60px rgba(0,0,0,0.5);
+            width: 75%;
+            height: auto;
+            max-height: 100%;
+            box-sizing: border-box;
+            display: block;
+            position: relative;
+            overflow: hidden; /* Clip screenshot corners */
+            margin-bottom: -1px;
+        }
+
+        .screenshot {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Landscape orientation adjustments */
+        .landscape-mode .title-wrapper {
+            margin-top: 40px;
+            margin-bottom: 25px;
+            max-width: 95%;
+        }
+
+        .landscape-mode .title {
+            max-width: 100%;
+        }
+
+        .landscape-mode .device-wrapper {
+            align-items: center; /* Center vertically in landscape */
+            padding-bottom: 40px;
+        }
+
+        .landscape-mode .device-frame {
+            border-radius: 24px; /* All corners rounded for floating look */
+            box-shadow: 0 20px 80px rgba(0,0,0,0.6);
+            margin-bottom: 0;
+        }
+
+        /* Responsive adjustments */
+        .tablet-mode .device-frame {
+            border-radius: 24px 24px 0 0;
+        }
+
+        .landscape-mode.tablet-mode .device-frame {
+            border-radius: 16px;
+        }
+
+        .dark-theme-mode {
+            --bg-gradient: linear-gradient(135deg, #1a1a1a 0%, #333333 100%);
+        }
+    </style>
+</head>
+<body>
+    <div id="app" class="container">
+        <div class="title-wrapper">
+            <div id="title" class="title">Compound Interest Calculator</div>
+        </div>
+        <div class="device-wrapper">
+            <div id="frame" class="device-frame">
+                <img id="screenshot" class="screenshot" src="" alt="App Screenshot">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function updateLayout() {
+            const params = new URLSearchParams(window.location.search);
+            const titleText = params.get('title') || 'Compound Calc';
+
+            // Set default image if none provided to avoid empty look
+            const imgSrc = params.get('img') || 'store-assets/screenshots/phone/phone_en_01_main.png';
+
+            const mode = params.get('mode') || 'phone'; // phone, tablet
+            const darkBg = params.get('dark') === 'true';
+
+            document.getElementById('title').innerText = titleText;
+
+            const imgEl = document.getElementById('screenshot');
+            
+            // If the requested image fails to load, fallback to English version
+            imgEl.onerror = function() {
+                // Determine the correct English fallback path by replacing the language code in the current path
+                // Standard pattern: device_lang_num_suffix.png (e.g., phone_ja_01_main.png)
+                const currentSrc = this.src;
+                if (currentSrc.includes('_en_')) return; // Already English or fallback failed
+                
+                const fallbackSrc = currentSrc.replace(/_([a-z]{2})_(\d{2})_/, '_en_$2_');
+                console.log(`Image not found: ${currentSrc}. Falling back to: ${fallbackSrc}`);
+                this.src = fallbackSrc;
+            };
+
+            imgEl.src = imgSrc;
+
+            // Wait for image to load to get its aspect ratio for a perfect fit
+            imgEl.onload = () => {
+                // Determine if the image is portrait or landscape
+                if (imgEl.naturalWidth > imgEl.naturalHeight) {
+                    document.getElementById('app').classList.add('landscape-mode');
+                }
+            };
+
+            if (mode === 'tablet') {
+                document.getElementById('app').classList.add('tablet-mode');
+            }
+
+            if (darkBg) {
+                document.getElementById('app').classList.add('dark-theme-mode');
+            }
+
+                        // Adaptive font size adjustment (Shrink-to-Fit)
+            function adjustFontSize() {
+                const titleElement = document.getElementById('title');
+                const containerHeight = window.innerHeight * 0.18; // Max 18% of screen height
+                let fontSize = parseFloat(window.getComputedStyle(titleElement).fontSize);
+                
+                // Keep shrinking until it fits within height or 15px minimum
+                while (titleElement.offsetHeight > containerHeight && fontSize > 15) {
+                    fontSize -= 2;
+                    titleElement.style.fontSize = fontSize + 'px';
+                }
+            }
+
+            // Frame width adjustment
+            const frame = document.getElementById('frame');
+            if (mode === 'phone') {
+                frame.style.width = '75%';
+            } else {
+                frame.style.width = '85%';
+            }
+
+            // Run adjustment after a small delay to ensure rendering
+            setTimeout(adjustFontSize, 50);
+
+            // Await fonts loaded for html2canvas safe layout
+            await document.fonts.ready;
+        }
+
+        window.onload = updateLayout;
+    </script>
+</body>
+</html>
+
