@@ -189,7 +189,17 @@
             titleEl.innerText = titleText;
             subtitleEl.innerText = subtitleText;
             
-            if (imgSrc) document.querySelector('.screenshot').src = imgSrc;
+            const ssEl = document.querySelector('.screenshot');
+            if (imgSrc) {
+                ssEl.onerror = function() {
+                    const currentSrc = this.src;
+                    if (currentSrc.includes('_en_')) return;
+                    const fallbackSrc = currentSrc.replace(/_([a-z]{2})_(\d{2})_/, '_en_$2_');
+                    console.log(`Image not found: ${currentSrc}. Falling back to: ${fallbackSrc}`);
+                    this.src = fallbackSrc;
+                };
+                ssEl.src = imgSrc;
+            }
             if (iconSrc) document.querySelector('.app-icon').src = iconSrc;
 
             // Wait for rendering and then adjust
