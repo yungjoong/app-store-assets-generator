@@ -6,6 +6,30 @@
     "featureGraphicGradient": "linear-gradient(135deg, #1e88e5 0%, #1565c0 100%)",
     "screenshotGradient": "linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%)"
   },
+  "setupGuide": {
+    "description": "Capture screenshots for each scenario and save them according to the pattern below.",
+    "folderStructure": [
+      "store-assets/",
+      "  └── screenshots/",
+      "      └── {device}/",
+      "          └── {device}_{lang}_{num}_{suffix}.png"
+    ],
+    "example": "store-assets/screenshots/phone/phone_ko_01_main.png"
+  },
+  "scenarios": {
+    "01": {
+      "name": "Main Dashboard",
+      "desc": "Show the main calculation and result screen."
+    },
+    "02": {
+      "name": "Featured Content",
+      "desc": "Showcase a specific highlight or unique feature."
+    },
+    "03": {
+      "name": "Advanced Settings",
+      "desc": "Display customization and setup options."
+    }
+  },
   "assets": {
     "iconPath": "web/icons/Icon-512.png",
     "screenshotPathPattern": "store-assets/screenshots/{device}/{device}_{lang}_{num}_{suffix}.png",

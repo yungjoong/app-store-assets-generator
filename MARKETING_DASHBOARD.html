@@ -21,6 +21,12 @@
         .loader { border: 5px solid #f3f3f3; border-top: 5px solid var(--brand-blue); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 20px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .alert { background: #fff3e0; padding: 15px; border-radius: 8px; border: 1px solid #ffe0b2; font-size: 14px; color: #e65100; margin-bottom: 25px; text-align: center; }
+        .guide-box { background: #e8f5e9; padding: 20px; border-radius: 12px; margin-bottom: 24px; border: 1px solid #c8e6c9; }
+        .guide-box h3 { margin-top: 0; color: #2e7d32; }
+        .code-block { background: #263238; color: #eeffff; padding: 15px; border-radius: 8px; font-family: monospace; font-size: 13px; margin: 10px 0; overflow-x: auto; line-height: 1.5; }
+        .scenario-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-top: 15px; }
+        .scenario-item { background: white; padding: 12px; border-radius: 8px; border: 1px solid #eee; font-size: 13px; }
+        .scenario-item b { display: block; color: var(--brand-blue); margin-bottom: 5px; }
     </style>
 </head>
 <body>
@@ -38,6 +44,7 @@
             <br>프로젝트 루트의 <code>assets-config.json</code>을 자동으로 읽어옵니다.
         </div>
 
+        <div id="setup-guide-container"></div>
         <div id="lang-list"></div>
 
         <div class="card" style="text-align: center; margin-top: 40px; border: 2px dashed var(--brand-blue); background: #f8f9fa;">
@@ -114,6 +121,34 @@
             
             if (config.theme && config.theme.primaryColor) {
                 document.documentElement.style.setProperty('--brand-blue', config.theme.primaryColor);
+            }
+
+            // Render Setup Guide & Scenarios
+            const guideContainer = document.getElementById('setup-guide-container');
+            if (config.setupGuide && config.scenarios) {
+                let scenariosHtml = '';
+                Object.entries(config.scenarios).forEach(([num, data]) => {
+                    scenariosHtml += `
+                        <div class="scenario-item">
+                            <b>${num}. ${data.name}</b>
+                            ${data.desc}
+                        </div>
+                    `;
+                });
+
+                guideContainer.innerHTML = `
+                    <div class="guide-box">
+                        <h3>📖 자산 생성 가이드</h3>
+                        <p>${config.setupGuide.description}</p>
+                        <div class="code-block">
+                            ${config.setupGuide.folderStructure.join('<br>').replace(/ /g, '&nbsp;')}
+                        </div>
+                        <p style="font-size: 12px; color: #666;">예시: <code>${config.setupGuide.example}</code></p>
+                        
+                        <h4 style="margin: 20px 0 10px 0;">📸 스크린샷 찰영 시나리오</h4>
+                        <div class="scenario-grid">${scenariosHtml}</div>
+                    </div>
+                `;
             }
 
             const listContainer = document.getElementById('lang-list');
