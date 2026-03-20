@@ -49,6 +49,7 @@
       "featureSubtitle": "투자의 마법을 가장 직관적으로 설계하세요",
       "shortDescription": "가장 직관적인 복리 계산기. 자산 성장을 한눈에 확인하세요.",
       "fullDescription": "복리 계산기 전문가용 버전입니다. 다양한 시나리오와 트레이딩 모드를 지원합니다.",
+      "changelog": "• 전문가용 복리 계산 로직 업데이트\n• 다크 모드 UI 개선",
       "screens": [
         "가장 직관적인 복리 계산기",
         "한눈에 들어오는 자산 성장 차트",
@@ -64,6 +65,7 @@
       "featureSubtitle": "Visualize the Magic of Compounding",
       "shortDescription": "Intuitive compound interest calculator. Visualize your wealth growth.",
       "fullDescription": "Professional compound interest calculator supporting various scenarios and trading modes.",
+      "changelog": "• Updated professional compounding logic\n• Improved dark mode UI",
       "screens": [
         "Intuitive Compound Calculator",
         "Visualize Your Wealth Growth",
